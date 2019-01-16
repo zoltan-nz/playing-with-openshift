@@ -77,7 +77,46 @@ minishift console
 
 Default login details: `developer/developer` | `system/admin`
 
+## Alternative drivers
 
+For running Docker on macOS need a virtualization layer. MacOS has a hypervisor framework which running directly on the kernel. There is a project called `Hyperkit` which provides a low level virtualization engine. If we use `docker-machine-driver-hyperkit` package as a driver for our `docker-machine` than we don't have to install any virtual machine, like VirtualBox or VMWare.
+
+However, experimenting with `hyperkit` driver was not always reliable and consistent. For example, if the Mac was rebooted, the `minishift start` command was not able to launch the previously created environment.
+
+`Hyperkit` driver predecessor is called `xhyve`. It is still supported by `minishift`. Experimenting with `xhyve` showed a more reliable environment. But launching the environment was still slow.
+
+Launching `minishift start`.
+Driver: `xhyve`
+
+First setup (2 cores, download images): 6:05.91
+Second start (2 cores): 2:25.00
+Third start (2 cores): 2:43.49
+Fourth start (8 cores): 2:24.92
+Fifth start (8 cores): 2:08.23
+Sixst start (8 cores): 2:05.49
+
+Driver: `drivekit`
+
+First setup (2 cores, download images): 5:51.98
+Second start (8 cores): 2:12.71
+
+Test machine: 
+
+MacBook Pro (Retina, 15-inch, Mid 2015)
+Processor 2.8 GHz Intel Core i7
+Memory 16 GB 1600 MHz DDR3
+Graphics Inter Iris Pro 1536 MB
+
+After experimenting with `xhyve` switching back to `drivekit` produced almost the same results. Using this virutalization solution the startup time of an Open Shift cluster is around 2 minutes.
+
+## Using VMware
+
+- Install Fedora
+- Setup ssh in Fedora
+- Install Docker CE
+- Setup insecure registry
+- Install `oc`
+- run `sudo cluster up` with hostname
 
 [okd architecture overview]: https://docs.okd.io/latest/architecture/index.html
 [minishift installation]: https://docs.okd.io/latest/minishift/index.html
